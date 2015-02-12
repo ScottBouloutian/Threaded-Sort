@@ -19,26 +19,32 @@ int main() {
     int list[7] = {96,75,46,1,1009,75,74};
     int n = sizeof(list)/sizeof(list[0]);
     int pivot = n/2;
-    int *firstHalf = list;
-    int *secondHalf = list + n/2;
     pthread_t tids[3];
     printf("Before Thread\n");
+
+    int *firstHalf = list;
     parameters *data1 = (parameters *) malloc(sizeof(parameters));
     data1 -> list = firstHalf;
     data1 -> size = pivot;
     pthread_create(&tids[0], NULL, *sortThread, data1);
+
+    int *secondHalf = list + n/2;
     parameters *data2 = (parameters *) malloc(sizeof(parameters));
     data2 -> list = secondHalf;
     data2 -> size = n - pivot;
     pthread_create(&tids[1], NULL, *sortThread, data2);
+
     pthread_join(tids[0], NULL);
     pthread_join(tids[1], NULL);
+
     parameters *data = (parameters *) malloc(sizeof(parameters));
     data -> list = list;
     data -> size = n;
     data -> pivot = pivot;
     pthread_create(&tids[2], NULL, *mergeThread, data);
+
     pthread_join(tids[2], NULL);
+
     printList(list, n);
     printf("After Thread\n");
     return 0;
